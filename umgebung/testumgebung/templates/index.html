@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block back_btn %}{% endblock %}
+
+
+{% block content %}
+<div class="buttons">
+    <ul class="buttons__list">
+        {% for campus in campuses %}
+            <li class="buttons__list__item campus_button">
+                <a class="buttons__list__item__link" href='/campuses/{{campus.name | replace(" ", "-") |lower}}'>
+                        <img src="{{ url_for('static', filename='images/campuses/' ~ campus.id |replace(' ', '-')|lower ~ '.jpg' ) }}" alt="">
+                    <span class="buttons__list__item__campus_name">{{campus.name}}</span>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}
+
+{% block title %}Campus Statistik Tool{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript"> removeNotificationAfterTimeout(3)</script>
+{% endblock %}

@@ -1,0 +1,107 @@
+form{
+    margin: 2rem 0;
+    /* max-width: 15rem; */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+label{
+    width: max-content;
+    align-self: flex-start;
+}
+
+
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="color"]) {
+    width: 100%;
+    padding: 1rem;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+    margin-bottom: 1rem;
+}
+
+input[type="color"] {
+    background: transparent;
+    border: grey solid 2px;
+    border-radius: 50%;
+    overflow: hidden;
+    width: 3rem;
+    height: 3rem;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+select {
+    padding: 1rem;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #eee;
+    background-color: #eee;
+    box-sizing: border-box;
+    font-size: 18px;
+    min-width: 11rem;
+    width: max-content;
+    margin-right: 1rem;
+}
+
+select[multiple] {
+    height: 15rem;
+    margin-left: 1rem;
+}
+
+/* select > option::before, .admin__subjects li>span::before {
+    content: "- ";
+} */
+
+option {
+    background-color: #eee;
+    padding: 0.5rem;
+}
+
+.remember-me {
+    display: flex;
+    flex-direction: row;
+    width: max-content;
+    align-self: center;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.remember-me__text {
+    align-self: center;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.remember-me__checkbox {
+  margin-right: 10px;
+}
+
+.form__image-container {
+    display: flex;
+    height: 34.375rem;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 1rem ;
+}
+
+.form__image-container input[type="file"] {
+    width: 50%;
+}
+
+.form__image-container img {
+    width: 50%;
+    height: 100%;
+    object-fit: cover;
+}

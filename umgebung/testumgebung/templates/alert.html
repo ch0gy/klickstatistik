@@ -1,0 +1,14 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+<ul class="notif__list">
+    {% if messages %}
+        {% for category, message in messages %}
+            <li class="{{category}} notif__list__item">
+                {{ message }}
+            </li>
+        {% endfor %}
+    {% else %}
+        <li class="notif__list__item" style="visibility: hidden;">
+        </li>
+    {% endif %}
+</ul>
+{% endwith %}

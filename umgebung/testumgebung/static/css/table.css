@@ -1,0 +1,66 @@
+/* Table Styling */
+
+table {
+    overflow: hidden;
+    border-radius: 10px;
+    width: 100%;
+}
+
+th {
+    background-color: black;
+    color: white;
+    text-align: left;
+    padding: 0.9rem 0;
+}
+
+
+td {
+    padding: 1rem 0;
+    text-align: left;
+}
+
+th, td {
+    padding-right: 2rem;
+    padding-left: 2rem;
+    min-width: 20%;
+}
+
+td:first-child, th:first-child {
+    padding-left: 2rem;
+}
+
+td:last-child, th:last-child {
+    padding-right: 2rem;
+}
+
+tr:nth-child(even) {
+    background-color: #f6f6f6;
+}
+
+tbody {
+    width: 100%;
+    overflow: auto;
+}
+
+tbody, thead {
+    display: block;
+}
+
+tbody {
+    width: 100%;
+    height: 40vh;
+}
+
+tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.namewider {
+    width: 30%;
+}
+
+.pictureWidth {
+    width: 25%;
+}

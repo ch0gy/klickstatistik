@@ -1,0 +1,76 @@
+.admin__campus-table tbody {
+    height: max-content;
+}
+
+.admin__campus-table tr{
+    max-height: max-content;
+}
+
+.admin_campus-table__campus-name {
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+    text-decoration: underline;
+}
+
+.admin__subjects {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ccc;
+}
+
+.admin__subjects ol {
+    width: 50%;
+    padding: 1rem;
+    overflow: auto;
+    /* border: 1px solid #ccc; */
+}
+
+.admin__subjects li {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.admin__subjects .dragFrom {
+    width: 50%;
+    margin: 0;
+    float: right;
+    display: flex;
+    flex-direction: column;
+    background-color: #eee;
+    height: 15rem;
+    align-items: center;
+    overflow: auto;
+    padding: 1rem 0;
+}
+
+.admin__subjects .dragFrom div {
+    padding: 0.3rem 0; 
+    align-self: center;
+}
+
+.admin__subjects__remove {
+    background-color: transparent;
+    border: none;
+    text-align: center;
+    color: #B7352D;
+    margin-left: auto;
+}
+
+.campus-action-buttons {
+    bottom: -4rem;
+    position: relative;
+    float: right;
+}
+
+.olFormDiv {
+    height: 15rem;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}

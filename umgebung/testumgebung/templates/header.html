@@ -1,0 +1,17 @@
+<div class="header">
+    <div class="ethLogoBlack">
+        <a href="/"><img class="eth-logo" src="/static/images/eth-logo.png" alt="ETH Logo"></a>
+    </div>
+    <div>
+        <p class="department">Campus Services</p>
+    </div>
+    <!-- <span class="department">Campus Services</span> -->
+    <div class="loginContainer">
+        {% if current_user.is_authenticated %}
+            <span class="user__icon material-symbols-outlined">person</span>
+            <span class="user__name">{{current_user.firstname}} {{current_user.surname}}</span>
+            <a href="{{ url_for('logout') }}" class="button logout_button">Logout</a>
+        {% endif %}
+    </div>
+
+</div>

@@ -1,0 +1,10 @@
+<div class="footer">
+    {% if current_user.is_authenticated and request.path != "/admin/" %}
+    <a class="button button__user-config" href="/admin">Admin</a>
+    {% endif %}
+    <a class="impressum" href="https://ethz.ch/de/footer/impressum.html">Impressum</a>    
+
+    {% block footer %}
+    {% endblock %}
+    <span class="footer__version">v1.1</span>
+</div>

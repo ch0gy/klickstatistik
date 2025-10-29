@@ -1,0 +1,389 @@
+{% extends "layout.html" %}
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='/css/tabs.css')}}">
+{% endblock %}
+{% block back_btn %}
+
+<a href="/" class="header__back__button">
+  <span class="material-symbols-outlined header__back__button__arrow">keyboard_backspace</span>
+  <span class="header__back__button__title">Back</span>
+</a>
+
+{% endblock %}
+{% block content %}
+
+<!-- Tab links -->
+<div class="tab">
+  <button class="button tablinks" id="account-tab" onclick="switchTab('Account')">Accounts</button>
+  <button class="button tablinks" id="campus-tab" onclick="switchTab('Campus')">Campus</button>
+  <button class="button tablinks" id="subjects-tab" onclick="switchTab('Subjects')">Kategorien</button>
+  <button class="button tablinks" id="data-tab" onclick="switchTab('Data')">Daten Export</button>
+</div>
+
+<!-- Tab content -->
+<div id="Account" class="user-table data-container tabcontent">
+  <table>
+    <thead>
+      <tr>
+        <th>Benutzername</th>
+        <th>Vorname</th>
+        <th>Nachname</th>
+        <th>Password</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="table__add-account">
+        <form method="POST" action="/admin/accounts">
+          <td><input type="text" name="add_username" placeholder="Neuer Benutzername" minlength="3" maxlength="16"
+              required></td>
+          <td><input type="text" name="add_firstname" placeholder="Neuer Vorname" minlength="2" maxlength="50" required>
+          </td>
+          <td><input type="text" name="add_surname" placeholder="Neuer Nachname" minlength="2" maxlength="50" required>
+          </td>
+          <td><input type="password" name="add_password" placeholder=" Neues Password" minlength="12" required></td>
+          <td>
+            <button type="submit" class="button button_add-account"> <span class="material-symbols-outlined"> add
+              </span> </button>
+          </td>
+        </form>
+      </tr>
+      {% for data in account_data %}
+      <tr>
+        <form method="POST" action="/admin/accounts/put/{{ data.username }}">
+          <td><input type="text" name="username" minlength="3" maxlength="16" value="{{ data.username }}" required></td>
+          <td><input type="text" name="firstname" minlength="2" maxlength="50" value="{{ data.firstname }}"></td>
+          <td><input type="text" name="surname" minlength="2" maxlength="50" value="{{ data.surname }}"></td>
+          <td><input type="password" name="password" minlength="12" placeholder="Neues Password"></td>
+          <td class="account-action-buttons">
+            <button type="submit" class="button button__edit-account">
+              <span class="material-symbols-outlined">save</span></button>
+            <button type="submit" class="button button__remove-account"
+              formaction="/admin/accounts/delete/{{ data.username }}">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </td>
+        </form>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div id="Campus" class="tabcontent ">
+  <script>
+    window.onload = function() {
+      const scrollY = localStorage.getItem('scrollPosition');
+      if (scrollY) {
+          window.scrollTo(0, parseInt(scrollY));
+          localStorage.removeItem('scrollPosition'); 
+      }
+    };
+
+    function previewFileImage(event, subjectId) {
+      const input = event.target;
+      const reader = new FileReader();
+    
+      reader.onload = function() {
+        const img = document.getElementById(`image-preview-${subjectId}`);
+        if (img) {
+          img.src = reader.result;
+        } else {
+          console.error("Image element not found for subject ID:", subjectId);
+        }
+      }
+    
+      if (input.files[0]) {
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function previewFile(event) {
+      const target = event.target;
+      const file = target.files[0];
+      const imageElement = target.closest('form').querySelector('.form__image-container__preview');
+      imageElement.src = URL.createObjectURL(file);
+    }
+
+    function drag(event) {
+      event.dataTransfer.setData("text", event.target.getAttribute('data-id'));
+    }
+    
+    function allowDrop(event) {
+      event.preventDefault(); 
+    }
+    
+    function drop(event, campusId) {
+      event.preventDefault();
+      
+      const subjectId = event.dataTransfer.getData("text");
+      const subjectDiv = document.querySelector(`div[data-id='${subjectId}']`);
+      if (!subjectDiv) return;
+  
+      const li = document.createElement("li");
+      li.innerHTML = `
+          <span>${subjectDiv.textContent}</span>
+          <a href="admin/campussubjects/remove/${campusId}/${subjectId}" class="admin__subjects__remove">
+              <span class="material-symbols-outlined">delete</span>
+          </a>
+      `;
+      
+      document.getElementById(`subjectList${campusId}`).appendChild(li);
+  
+      const subjectsInput = document.getElementById(`subjects${campusId}`);
+      const existingSubjects = subjectsInput.value ? subjectsInput.value.split(',') : [];
+      
+      if (!existingSubjects.includes(subjectId)) {
+          existingSubjects.push(subjectId);
+          subjectsInput.value = existingSubjects.join(',');
+      }
+
+      localStorage.setItem('scrollPosition', window.scrollY);
+
+      const form = subjectsInput.closest('form');
+      form.submit();
+    }
+
+    function updateBackgroundColor(color) {
+      document.getElementById('colorPreview').style.backgroundColor = color;
+    }
+
+    function resetImageToPlaceholder(subjectId) {
+      const img = document.getElementById(`image-preview-${subjectId}`);
+      img.src = "{{ url_for('static', filename='images/imagePlaceholder.png') }}";
+      
+      document.getElementById(`reset_image${subjectId}`).value = "true";
+    }
+    
+  </script>
+
+  <table class="admin__campus-table">
+    <thead>
+      <tr>
+        <th>Campus</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for campus in campuses %}
+      <tr>
+        <td>
+          <a href="/campuses/{{ campus.name }}" class="admin_campus-table__campus-name">{{ campus.name }}</a>
+          <form action="/admin/campuses/put/{{ campus.id }}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="subjects" id="subjects{{ campus.id }}" value="">
+            <input required type="text" value="{{ campus.name }}" placeholder="Campus Name" name="campusname"
+              id="campusname{{ campus.id }}" style="font-size: medium;">
+            <div class="form__image-container">
+              <div class="tabContentCampus">
+                <img style="width: 100%;"
+                  src="{{ url_for('static', filename='images/campuses/' ~ campus.id |replace(' ', '-')|lower ~ '.jpg' ) }}"
+                  alt="" class="form__image-container__preview">
+              </div>
+              <div class="tabContentHalfCampus">
+                <input type="file" accept="image/jpg" name="campusimage" id="campusimage" onchange="previewFile(event)">
+                <div class="admin__subjects">
+                  <ol class="olFormDiv" id="subjectList{{ campus.id }}" ondrop="drop(event, {{ campus.id }})" ondragover="allowDrop(event)">
+                    {% for subject in campus.subjects %}
+                    <li>
+                      <!-- Dynamically Resized Text -->
+                      <span class="textInput">{{ subject.name }}</span>
+                      <a href="admin/campussubjects/remove/{{ campus.id }}/{{ subject.id }}" class="admin__subjects__remove">
+                        <span class="material-symbols-outlined">delete</span>
+                      </a>
+                    </li>
+                    {% endfor %}
+                  </ol>
+                  <div id="draggable-subjects-{{ campus.id }}" class="dragFrom">
+                    {% for subject in campus.unused_subjects %}
+                    <div class="draggable" draggable="true" ondragstart="drag(event)" data-id="{{ subject.id }}">
+                      {{ subject.name }}
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+                <div class="campus-action-buttons">
+                  <button type="submit" class="button button__edit-campus">
+                    <span class="material-symbols-outlined">save</span>
+                  </button>
+                  <button type="submit" class="button button__remove-campus"
+                    formaction="/admin/campuses/delete/{{ campus.id }}">
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      <!-- Add a new campus form -->
+      <tr>
+        <td>
+          <span class="admin_campus-table__campus-name">Campus-Info hinzufügen</span>
+          <form action="/admin/campuses" method="POST" enctype="multipart/form-data">
+            <input required type="text" placeholder="Campus Name" name="add_campusname" id="add_campusname" style="font-size: medium;">
+            <div class="form__image-container">
+              <div class="tabContentCampus">
+                <img style="width: 100%;" src="{{ url_for('static', filename='images/placeholder.jpg') }}" alt=""
+                  class="form__image-container__preview">
+              </div>
+              <div class="tabContentHalfCampus">
+                <input required type="file" accept="image/jpg" name="add_campusimage" id="campusimage"
+                  onchange="previewFile(event)">
+                <div class="admin__subjects">
+                  <select style="width: 100%; margin: 0;" name="add_subjects" id="add_subjects" multiple>
+                    {% for subject in subjects %}
+                    <option value="{{ subject.id }}">{{ subject.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="campus-action-buttons">
+                  <button type="submit" class="button button__add-campus">
+                    <span class="material-symbols-outlined">add</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+
+<div id="Subjects" class="tabcontent ">
+  <table>
+    <thead>
+      <tr>
+        <th class="namewider">Name</th>
+        <th>Farbe</th>
+        <th>Pictogram</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for subject in subjects %}
+      <tr>
+        <form action="/subjects/put/{{subject.id}}" method="post" enctype="multipart/form-data">
+          <td class="namewider"><input type="text" placeholder="Name" value="{{subject.name}}" name="subjectname"
+              id="subjectname{{subject.id}}"></td>
+
+          <td class="colorSmallerWidth"><input type="color" placeholder="Farbe" value="#{{subject.color}}" name="subjectcolor"
+              id="subjectcolor{{subject.id}}"></td>
+
+          <td>
+            <div style="display: flex; flex-direction: row">
+              <a href="#" onclick="document.getElementById('subjectpictograph{{subject.id}}').click(); return false;" style="background-color: #{{subject.color}}; width: 3.5rem; display:flex">
+                <img id="image-preview-{{subject.id}}"
+                      src="{{ url_for('static', filename='images/pictographs/' + (subject.image if subject.image else 'imagePlaceholder.png')) }}"
+                      style="width: 3.5rem; height: 3.5rem; border: 1px solid gray"
+                      class="form__image-container__preview">
+              </a>
+              <input type="file" accept="image/png"
+                      style="display: none;"
+                      id="subjectpictograph{{subject.id}}"
+                      name="subjectpictograph"
+                      onchange="previewFileImage(event, '{{subject.id}}')">
+              <input type="hidden" name="reset_image" id="reset_image{{subject.id}}" value="false"> <!-- Hidden input -->
+              <div style="margin-left: 1rem; justify-content: center; align-self: center">
+                <a href="#" onclick="resetImageToPlaceholder('{{subject.id}}'); return false;">
+                  <img src="{{ url_for('static', filename='images/reload.png') }}" style="width: 2rem;">
+                </a>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div class="action-buttons">
+              <button type="submit" class="button button__edit-subject"
+                formaction="/admin/subjects/put/{{subject.id}}">
+                <span class="material-symbols-outlined">save</span>
+              </button>
+              <button type="submit" class="button button__remove-subject"
+                formaction="/admin/subjects/delete/{{subject.id}}">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
+          </td>
+        </form>
+      </tr>
+      {% endfor %}
+      <tr>
+        <form action="/admin/subjects" method="POST" enctype="multipart/form-data">
+          <td class="namewider"><input required type="text" placeholder="Name" name="add_subjectname" id="add_subjectname"></td>
+          <td>
+            <input required type="color" placeholder="Farbe" name="add_subjectcolor" value="#08407E" id="add_subjectcolor" onchange="updateBackgroundColor(this.value)">
+        </td>
+        <td>
+            <a href="#" onclick="document.getElementById('add_subjectpictograph').click(); return false;" id="colorPreview" style="background-color: #08407E; width: 3.5rem; display:flex">
+                <img src="{{ url_for('static', filename='images/imagePlaceholder.png') }}"
+                     id="image-preview-add"
+                     style="width: 3.5rem; height: 3.5rem; border: 1px solid gray;"
+                     class="form__image-container__preview">
+            </a>
+            <input type="file" accept="image/png" name="add_subjectpictograph" id="add_subjectpictograph" style="display: none;" onchange="previewFileImage(event, 'add')">
+          </td>
+          <td>
+            <button type="submit" class="button button__add-subject">
+              <span class="material-symbols-outlined">add</span>
+            </button>
+          </td>
+        </form>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<div id="Data" class="data-container tabcontent">
+  <div class="data-container__export">
+    <form action="/export" method="POST">
+      <select name="campus-export-filter" id="campus-export-filter">
+        <option value="0">Alle</option>
+        {% for campus in campuses %}
+        <option value="{{campus.id}}">{{campus.name}}</option>
+        {% endfor %}
+      </select>
+      <select name="month-export-filter" id="month-export-filter">
+        {% for month in range(1, 13) %}
+        <option value="{{ month }}" {% if month==datetime.datetime.now().month %}selected{% endif %}>
+          {{ datetime.datetime.strptime(month|string, '%m').strftime('%B') }}
+        </option>
+        {% endfor %}
+      </select>
+      <select name="year-export-filter" id="year-export-filter">
+        {% for year in range(datetime.datetime.now().year, 2022 , -1) %}
+        <option value="{{year}}">{{year}}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="button button__export">Export <span class="material-symbols-outlined">
+          download
+        </span> </button>
+    </form>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Campus Info</th>
+        <th>Kategorie</th>
+        <th>Zeitstempel</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for data in dataset %}
+      <tr>
+        <td>{{data.id}}</td>
+        <td>{{data.campusinfo.name}}</td>
+        <td>{{data.subject.name}}</td>
+        <td>{{ data.timestamp.strftime("%H:%M %d.%m.%Y") }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/textInput.js') }}"></script>
+{% endblock %}

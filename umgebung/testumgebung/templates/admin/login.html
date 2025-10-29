@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block title %} Login Campus Statistik {% endblock %}
+{% block content%}
+
+{% if error %} {{error}}  {% endif %}
+<div class="loginScreen">
+    <form id="login" method="post" action="/login">
+        <div class="loginFields">
+            <div class="loginFieldUser">
+                <label for="username">
+                    <b class="input_title">Benutzername</b>
+                </label>
+                <input type="text" class="login__input__username" name="username" id="username" placeholder="Benutzername" value="{{request.form.username}}">
+            </div>
+            <div class="loginFieldUser">
+                <label for="password">
+                    <b class="input_title">Passwort</b>
+                </label>
+                <input class="login__input__password" type="password" name="password" id="password" placeholder="Passwort" value="{{request.form.password}}">
+            </div>
+            <!-- <div class="remember-me">
+                <label for="check" class="remember-me__text">
+                    Remember me
+                </label>
+                <input type="checkbox" class="remember-me__checkbox" id="check" value="checked" name="remembermebox">
+            </div> -->
+        </div>
+
+        <input class="button login_submit_button" type="submit" name="login" id="login-submit" value="Login" style="width: 10rem;">
+    </form>
+</div>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript"> removeNotificationAfterTimeout(5)</script>
+{% endblock %}

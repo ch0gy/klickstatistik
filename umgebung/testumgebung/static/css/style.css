@@ -1,0 +1,335 @@
+/* General */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    border-spacing: 0;
+    font-family: "DINPro", helvetica, arial, sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+h1 {
+    align-self: center;
+    font-size: 50px;
+    margin-bottom: 2rem;
+}
+
+.material-symbols-outlined {
+    text-decoration: none !important;
+}
+
+/* Button */
+.button, input[type="file"]::-webkit-file-upload-button {
+    border: none;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    width: max-content;
+    color: rgb(255, 255, 255);
+    background-color: rgb(0, 0, 0); /* Green */
+}
+
+.button:hover, input[type="file"]::-webkit-file-upload-button:hover {
+    opacity: 0.9;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.login_submit_button {
+    align-self: center;
+    cursor: pointer;
+}
+
+.login__input__password,
+.login__input__username {
+    margin-bottom: 1.5rem;
+}
+
+/* Notification */
+.notif__list {
+    list-style: none;
+}
+
+.notif__list__item {
+    background-color: #215caf;
+    color: #fff;
+    margin: 0rem 5rem;
+    border-radius: 0.375em;
+    position: relative;
+    padding: 1.25rem 2.5rem 1.25rem 1.5rem;
+}
+
+.notif__list__item.info {
+    background-color: #215caf;
+}
+.notif__list__item.warning {
+    background-color: #fad325;
+    color: black;
+}
+.notif__list__item.danger {
+    background-color: #b7352d;
+}
+
+.notif__list__item.success {
+    background-color: #a1ab71;
+    color: black;
+}
+
+.notif__list__item__close-button {
+    right: 0.5rem;
+    position: absolute;
+    top: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: none;
+    padding: 0.15rem;
+}
+
+.notif__list__item__close-button:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.notif__list__item__close-button__icon {
+    font-size: 20px;
+    color: white;
+}
+
+.header a {
+    height: 100%;
+}
+
+.header img {
+    height: 100%;
+    width: auto;
+}
+
+.header__back__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    margin-left: auto;
+    text-decoration: none;
+    color: black;
+}
+
+.header__back__button__arrow {
+    font-size: 60px;
+}
+
+.header__back__button__title {
+    margin-left: 10px;
+}
+.header__back__button:hover .header__back__button__title {
+    text-decoration: underline;
+}
+
+.user__name {
+    font-size: 25px;
+    margin-right: 20px;
+}
+.user__icon {
+    margin-right: 10px;
+    font-size: 30px;
+}
+
+.content {
+    margin-bottom: 3rem;
+    margin-top: -1rem
+}
+
+.department {
+    margin-left: 3rem;
+    font-size: 25px;
+}
+
+/* Subject Buttons */
+.buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 5rem;
+    margin-top: 3.5rem;
+}
+
+.buttons__list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4rem;
+    flex-direction: row;
+    align-items: center;
+}
+
+.buttons__list__item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.buttons__list__item.subject_button {
+    background-color: #215caf;
+    width: 250px;
+    height: 250px;
+    font-size: 34px;
+}
+
+.buttons__list__item.campus_button {
+    font-size: 34px;
+}
+
+.buttons__list__item__link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    font-size: 220px;
+    padding: 0 1.5rem;
+}
+
+.campus_button .buttons__list__item__link:hover {
+    text-decoration: underline;
+    color: black;
+}
+
+.campus_button img {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+}
+
+.subject_button:hover {
+    cursor: pointer;
+}
+
+.subject_button .buttons__list__item__link {
+    color: white;
+}
+
+.buttons__list__item__campus_name {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-size: 20px;
+    color: black;
+    margin-top: 5px;
+}
+
+/* Data Page */
+.data-container {
+    display: flex;
+    justify-content: center;
+}
+
+.data-container__export {
+    display: flex;
+}
+
+.data-container__export > form {
+    display: flex;
+    flex-direction: row;
+    margin-left: unset;
+    margin-right: unset;
+    width: 100%;
+}
+
+.button__export {
+    max-height: 56px;
+    margin: 8px;
+    margin-left: auto;
+}
+
+.button__export .material-symbols-outlined {
+    margin-left: 0.75rem;
+}
+
+/* Accounts */
+.account-action-buttons, .campus-action-buttons, .action-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+}
+
+.button__user-config {
+    bottom: 0;
+}
+
+.button__add-account {
+    display: flex;
+    justify-content: flex-end;
+    margin-left: auto;
+}
+
+.account-buttons {
+    display: flex;
+    flex-direction: row;
+}
+
+.account-buttons button {
+    margin-right: 10px;
+}
+
+.impressum {
+    order: 2;
+    color: black;
+    text-decoration: none;
+}
+
+.impressum:hover {
+    text-decoration: underline;
+}
+
+.footer__version {
+    flex-direction: row-reverse;
+    margin-left: auto;
+    order: 3;
+}
+
+.draggable {
+    cursor: grab;
+}
+
+.draggable:active {
+    cursor: grabbing;
+}
+
+input[type="text"] {
+    font-size: medium;
+}
+
+.notif-container {
+    height: 58px;
+}
+
+.subject_button {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.textInput {
+       word-break: word-wrap;
+       text-align:center;
+
+}

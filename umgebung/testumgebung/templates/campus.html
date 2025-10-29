@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block back_btn %}
+<a href="/" class="header__back__button">
+    <span class="material-symbols-outlined header__back__button__arrow">keyboard_backspace</span>
+    <span class="header__back__button__title">Back</span>
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="buttons">
+    <ul class="buttons__list">
+        {% for subject in subjects %}
+            {% set bg_color = "#" + subject.color %}
+            <li class="buttons__list__item subject_button" style='background-color: {{ bg_color }}; border: 1px solid lightgray;'>
+                <a class="buttons__list__item__link" href='/log/{{ campus.id }}/{{ subject.id }}'
+                   style='color: {{ "black" if subject.color|is_light_color else "white" }};'>
+
+                    {% if subject.image and subject.image != 'imagePlaceholder.png' %}
+                        <img src="{{ url_for('static', filename='images/pictographs/' + subject.image) }}"
+                             alt="{{ subject.name }}"
+                             style="width: 9rem; height: 9rem; display: block; margin: auto;">
+                    {% else %}
+                        <span class="textInput">{{ subject.name }}</span> <!-- Add span for text resizing -->
+                    {% endif %}
+
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+
+{% block title %}{{campus.name}}{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        removeNotificationAfterTimeout(5);
+    </script>
+    <script src="{{ url_for('static', filename='js/textInput.js') }}"></script> <!-- Link to the script that dynamically adjusts font size -->
+{% endblock %}
