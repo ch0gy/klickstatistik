@@ -1,12 +1,23 @@
-import xlsxwriter
 import os
+import tempfile
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
-from flask import Flask, render_template, request, redirect, url_for, Blueprint, flash, make_response
+from flask import (
+    Flask,
+    current_app,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    Blueprint,
+    flash,
+    make_response,
+)
 from flask_login import login_user, logout_user, login_required
 from passlib.hash import sha256_crypt
 import datetime
 from models import db, CampusInfo, Subject, CampusSubject, CampusLog, Account
+from export_utils import export_logs_to_excel, upload_file_to_sharepoint
 
 app = Flask(__name__)
 
@@ -87,63 +98,55 @@ def export():
             campus = None
         return redirect(url_for('data.export', year=year, month=month, campus=campus))
     elif request.method == 'GET':
-        # Set year and month to current year and month
-        year = datetime.datetime.now().year
-        month = datetime.datetime.now().month
-        # Get year and month from request
-        if (request.args.get('year')):
-            year = request.args.get('year')
-        if (request.args.get('month')):
-            month = request.args.get('month')
+        year = int(request.args.get('year', datetime.datetime.now().year))
+        month = int(request.args.get('month', datetime.datetime.now().month))
+        campus_arg = request.args.get('campus')
+        campus_id = int(campus_arg) if campus_arg not in (None, '', '0') else None
 
-        # Set custom headers
-        headers = ['Campusinfo', 'Kategorie', 'Datum']
-
-        # Query the database and store the results in a list of tuples
-        query = CampusLog.query.filter(
-            db.extract('year', CampusLog.timestamp) == year,
-            db.extract('month', CampusLog.timestamp) == month,
-        )
-
-        if (request.args.get('campus')):
-            query = query.filter(CampusLog.campusinfo_id == request.args.get('campus'))
-        campuslogs = query.all()
-
-        data = [(cl.campusinfo.name, cl.subject.name, cl.timestamp) for cl in campuslogs if cl.campusinfo and cl.subject]
-
-        # Create a new workbook and add a worksheet
-        workbook = xlsxwriter.Workbook('CampusStatistikData.xlsx')
-        worksheet = workbook.add_worksheet()
-        bold_format = workbook.add_format({'bold': True})
-
-        # Write the headers to the first row
-        for col, header in enumerate(headers):
-            worksheet.write(0, col, header, bold_format)
-
-        # Write the data to subsequent rows
-        date_format = workbook.add_format({'num_format': 'dd.mm.yyyy hh:mm:ss'})
-        for row, row_data in enumerate(data):
-            for col, cell_data in enumerate(row_data):
-                if col == 2:
-                    worksheet.write(row + 1, col, cell_data, date_format)
-                else:
-                    worksheet.write(row + 1, col, cell_data)
-
-        for col, header in enumerate(headers):
-            max_width = max([len(str(header))] + [len(str(row_data[col])) for row_data in data])
-            worksheet.set_column(col, col, max_width)
-            
-        # Close the workbook
-        workbook.close()
-
-        # Return the Excel file as a Flask response
-        with open('CampusStatistikData.xlsx', mode='rb') as file:
-            response = make_response(file.read())
+        with tempfile.TemporaryDirectory() as tmpdir:
+            file_path, _ = export_logs_to_excel(
+                year,
+                month,
+                campus_id=campus_id,
+                directory=tmpdir,
+                filename='CampusStatistikData.xlsx',
+            )
+            with open(file_path, mode='rb') as file:
+                response = make_response(file.read())
 
         response.headers['Content-Disposition'] = 'attachment; filename=CampusStatistikData.xlsx'
         response.headers['Content-type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
         return response
+
+
+@data_blueprint.route('/export/sharepoint', methods=['POST'])
+@login_required
+def export_to_sharepoint():
+    year = int(request.form.get('year-export-filter', datetime.datetime.now().year))
+    month = int(request.form.get('month-export-filter', datetime.datetime.now().month))
+    campus_value = request.form.get('campus-export-filter')
+    campus_id = int(campus_value) if campus_value not in (None, '', '0') else None
+
+    try:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            file_path, _ = export_logs_to_excel(
+                year,
+                month,
+                campus_id=campus_id,
+                directory=tmpdir,
+                filename='CampusStatistikData.xlsx',
+            )
+            upload_file_to_sharepoint(file_path, target_filename='CampusStatistikData.xlsx')
+    except ValueError as exc:
+        flash(str(exc), 'danger')
+    except Exception:
+        current_app.logger.exception('SharePoint upload failed')
+        flash('Die Datei konnte nicht nach SharePoint hochgeladen werden.', 'danger')
+    else:
+        flash('Der Export wurde erfolgreich nach SharePoint hochgeladen.', 'success')
+
+    return redirect(url_for('admin.admin', tab='data'))
 
 @admin_blueprint.route('/accounts', methods=['POST'])
 @login_required
