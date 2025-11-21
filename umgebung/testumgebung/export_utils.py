@@ -10,6 +10,9 @@ from office365.runtime.auth.client_credential import ClientCredential
 from office365.runtime.auth.user_credential import UserCredential
 from office365.sharepoint.client_context import ClientContext
 
+import dotenv
+dotenv.load_dotenv()
+
 from models import CampusLog, db
 
 HEADERS: Sequence[str] = ("Campusinfo", "Kategorie", "Datum")

@@ -113,9 +113,9 @@ def is_light_color(hex_color):
 app.jinja_env.filters['is_light_color'] = is_light_color
 
 # Change back when deploying/developing
-# if __name__ == "__main__":
-#     app.run(debug=True, host="127.0.0.1", port=3306)
-
 if __name__ == "__main__":
-    from waitress import serve
-    serve(app, host="129.132.175.25", port=8080) 
+     app.run(debug=True, host="127.0.0.1", port=3306)
+
+# if __name__ == "__main__":
+#    from waitress import serve
+#    serve(app, host="129.132.175.25", port=8080) 
