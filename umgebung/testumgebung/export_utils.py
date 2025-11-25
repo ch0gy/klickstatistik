@@ -12,15 +12,6 @@ from office365.sharepoint.client_context import ClientContext
 
 import dotenv
 dotenv.load_dotenv()
-import os
-print("Loaded .env from:", os.path.abspath('.env'))
-print("Exists:", os.path.exists('.env'))
-
-print("DEBUG ENV:")
-print("CLIENT_ID:", repr(os.environ.get("SHAREPOINT_CLIENT_ID")))
-print("CLIENT_SECRET:", repr(os.environ.get("SHAREPOINT_CLIENT_SECRET")))
-print("USERNAME:", repr(os.environ.get("SHAREPOINT_USERNAME")))
-print("PASSWORD:", repr(os.environ.get("SHAREPOINT_PASSWORD")))
 
 
 from models import CampusLog, db
