@@ -12,6 +12,16 @@ from office365.sharepoint.client_context import ClientContext
 
 import dotenv
 dotenv.load_dotenv()
+import os
+print("Loaded .env from:", os.path.abspath('.env'))
+print("Exists:", os.path.exists('.env'))
+
+print("DEBUG ENV:")
+print("CLIENT_ID:", repr(os.environ.get("SHAREPOINT_CLIENT_ID")))
+print("CLIENT_SECRET:", repr(os.environ.get("SHAREPOINT_CLIENT_SECRET")))
+print("USERNAME:", repr(os.environ.get("SHAREPOINT_USERNAME")))
+print("PASSWORD:", repr(os.environ.get("SHAREPOINT_PASSWORD")))
+
 
 from models import CampusLog, db
 
@@ -108,14 +118,12 @@ def export_logs_to_excel(
 def _build_sharepoint_credentials():
     client_id = os.environ.get("SHAREPOINT_CLIENT_ID")
     client_secret = os.environ.get("SHAREPOINT_CLIENT_SECRET")
-    username = os.environ.get("SHAREPOINT_USERNAME")
-    password = os.environ.get("SHAREPOINT_PASSWORD")
 
-    if client_id and client_secret:
-        return ClientCredential(client_id, client_secret)
-    if username and password:
-        return UserCredential(username, password)
-    raise ValueError("SharePoint credentials are not configured.")
+    if not client_id or not client_secret:
+        raise ValueError("Client credentials missing. Username/Password login is NOT supported.")
+
+    print("Using SharePoint client credentials.")
+    return ClientCredential(client_id, client_secret)
 
 
 def _normalize_sharepoint_path(path: str) -> str:
@@ -140,6 +148,10 @@ def upload_file_to_sharepoint(local_path: str, target_filename: Optional[str] = 
     name = target_filename or os.path.basename(local_path)
     with open(local_path, "rb") as file_handle:
         content = file_handle.read()
-    uploaded_file = folder.upload_file(name, content, overwrite=True)
+    uploaded_file = folder.upload_file(name, content)
+
+
+
+
     ctx.execute_query()
     return uploaded_file.serverRelativeUrl
