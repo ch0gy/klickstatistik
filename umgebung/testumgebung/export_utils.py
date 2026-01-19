@@ -106,6 +106,8 @@ def export_logs_to_excel(
     return full_path, rows
 
 
+
+
 def _build_sharepoint_credentials():
     client_id = os.environ.get("SHAREPOINT_CLIENT_ID")
     client_secret = os.environ.get("SHAREPOINT_CLIENT_SECRET")
@@ -115,6 +117,7 @@ def _build_sharepoint_credentials():
 
     print("Using SharePoint client credentials.")
     return ClientCredential(client_id, client_secret)
+
 
 
 def _normalize_sharepoint_path(path: str) -> str:
@@ -135,6 +138,7 @@ def upload_file_to_sharepoint(local_path: str, target_filename: Optional[str] = 
     credentials = _build_sharepoint_credentials()
     ctx = ClientContext(site_url).with_credentials(credentials)
     folder = ctx.web.get_folder_by_server_relative_url(_normalize_sharepoint_path(target_path))
+    print(target_path)
 
     name = target_filename or os.path.basename(local_path)
     with open(local_path, "rb") as file_handle:
